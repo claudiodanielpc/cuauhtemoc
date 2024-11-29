@@ -78,13 +78,6 @@ if coordinates:
     except ValueError:
         st.error("Por favor ingresa coordenadas válidas en el formato: lat, lon")
 
-if lat and lon:
-    try:
-        lat, lon = float(lat), float(lon)
-        folium.Marker(location=[lat, lon], tooltip=f"Punto: {lat}, {lon}").add_to(m)
-        st.success("Punto añadido al mapa")
-    except ValueError:
-        st.error("Por favor ingresa coordenadas válidas.")
 
 
 folium.LayerControl().add_to(m)
