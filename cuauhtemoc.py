@@ -5,10 +5,8 @@ from streamlit_folium import st_folium
 from folium.plugins import MarkerCluster
 import geopandas as gpd
 
-url="https://github.com/claudiodanielpc/cuauhtemoc/raw/refs/heads/main/cuauhtemoc.gpkg"
 
-
-colonias=gpd.read_file(url)
+colonias=gpd.read_file("https://github.com/claudiodanielpc/cuauhtemoc/raw/refs/heads/main/cuauhtemoc.gpkg")
 #Filtrar cve_ent=9 y cve_mun=015
 colonias=colonias[(colonias.cve_ent=="09") & (colonias.cve_mun=="015")]
 
