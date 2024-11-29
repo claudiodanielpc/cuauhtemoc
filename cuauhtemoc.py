@@ -6,7 +6,7 @@ from folium.plugins import MarkerCluster
 import geopandas as gpd
 
 
-colonias=gpd.read_file("https://github.com/claudiodanielpc/cuauhtemoc/raw/refs/heads/main/cuauhtemoc.gpkg")
+colonias=gpd.read_file("https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuauhtemoc.geojson")
 
 
 st.markdown("<p style='font-family: Century Gothic; font-weight: bold;font-size: 35px; text-align: center'>Cuauhtémoc</p>", unsafe_allow_html=True)
