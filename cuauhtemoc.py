@@ -49,6 +49,8 @@ else:
 # Add a section for loading the CSV
 st.sidebar.header("Ubicación de puntos en el mapa")
 
+
+
 # Option 1: Upload a CSV
 uploaded_file = st.sidebar.file_uploader("Carga CSV con columnas lat y lon", type=["csv"])
 if uploaded_file:
@@ -57,13 +59,25 @@ if uploaded_file:
 
     # Check if required columns exist
     if {'lat', 'lon'}.issubset(data.columns):
-        st.success("¡CSV cargado con éxito!")
-        # Add points to the map
-        marker_cluster = MarkerCluster().add_to(m)
-        for _, row in data.iterrows():
-            folium.Marker(location=[row['lat'], row['lon']], tooltip=f"Point: {row['lat']}, {row['lon']}").add_to(marker_cluster)
+        # Remove rows with NaN values in lat/lon
+        data = data.dropna(subset=['lat', 'lon'])
+
+        # Validate latitude and longitude ranges
+        data = data[(data['lat'].between(-90, 90)) & (data['lon'].between(-180, 180))]
+
+        if data.empty:
+            st.error("El CSV no contiene coordenadas válidas.")
+        else:
+            st.success("¡CSV cargado con éxito!")
+            # Add points to the map
+            marker_cluster = MarkerCluster().add_to(m)
+            for _, row in data.iterrows():
+                folium.Marker(location=[row['lat'], row['lon']], tooltip=f"Point: {row['lat']}, {row['lon']}").add_to(marker_cluster)
     else:
         st.error("El CSV debe tener las columnas 'lat' y 'lon'.")
+
+
+
 
 
 # Option 2: Manual Input for a Single Coordinate
