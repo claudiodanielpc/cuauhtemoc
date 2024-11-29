@@ -16,7 +16,7 @@ def load_colonias():
 
 
 # Cache base map creation
-@st.cache_data
+@st.cache_resource
 def create_base_map():
     # Create base map
     m = folium.Map(location=[19.4326, -99.1332], zoom_start=12)
