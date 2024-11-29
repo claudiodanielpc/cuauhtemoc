@@ -15,31 +15,13 @@ def load_colonias():
         engine="pyogrio")
 
 
-# Initialize session state for the base map and dynamic data
-if "base_map" not in st.session_state:
-    # Create the base map only once
-    m = folium.Map(location=[19.4326, -99.1332], zoom_start=12)
-
-    # Add base tile layers
-    folium.TileLayer(
-        tiles='https://www.google.com/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}',
-        attr='Google',
-        name='Google Satellite',
-        overlay=False,
-        control=True
-    ).add_to(m)
-
-    folium.TileLayer(
-        tiles='https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-        attr='CartoDB',
-        name='CartoDB Positron',
-        overlay=False,
-        control=True
-    ).add_to(m)
-
-    folium.LayerControl().add_to(m)
-
-    st.session_state["base_map"] = m
+# Initialize session state for dynamic layers
+if "map_layers" not in st.session_state:
+    st.session_state["map_layers"] = {
+        "colonias": True,  # Toggle for GeoJSON layer
+        "csv_points": True,  # Toggle for CSV points
+        "manual_points": []  # List of manually added points
+    }
 
 if "csv_data" not in st.session_state:
     st.session_state["csv_data"] = pd.DataFrame(columns=["lat", "lon"])
@@ -49,18 +31,21 @@ colonias = load_colonias()
 
 # App layout
 st.markdown(
-    "<p style='font-family: Century Gothic; font-weight: bold;font-size: 35px; text-align: center'>Cuauhtémoc</p>",
+    "<p style='font-family: Century Gothic; font-weight: bold;font-size: 35px; text-align: center'>Cuauhtémoc GIS</p>",
     unsafe_allow_html=True)
 
-# Sidebar for dropdown and CSV upload
+# Sidebar for layer controls and data input
 st.sidebar.header("Opciones del mapa")
 
-# Dropdown for selecting a colonia
-selected_colonia = st.sidebar.selectbox(
-    'Selecciona una colonia', ['Todas'] + colonias['nom_colonia'].tolist()
-)
+# Layer controls
+st.sidebar.subheader("Capas del mapa")
+st.session_state["map_layers"]["colonias"] = st.sidebar.checkbox("Mostrar colonias (GeoJSON)",
+                                                                 value=st.session_state["map_layers"]["colonias"])
+st.session_state["map_layers"]["csv_points"] = st.sidebar.checkbox("Mostrar puntos CSV",
+                                                                   value=st.session_state["map_layers"]["csv_points"])
 
 # Upload CSV
+st.sidebar.subheader("Carga de datos")
 uploaded_file = st.sidebar.file_uploader("Carga CSV con columnas lat y lon", type=["csv"])
 if uploaded_file:
     # Read and validate CSV
@@ -78,34 +63,54 @@ if uploaded_file:
         st.error("El CSV debe tener las columnas 'lat' y 'lon'.")
 
 # Manual Input for a Single Coordinate
-st.sidebar.markdown("### Ubicación manual")
+st.sidebar.subheader("Agregar punto manualmente")
 coordinates = st.sidebar.text_input("Inserta coordenadas (formato: lat, lon)")
+if coordinates:
+    try:
+        lat, lon = map(float, coordinates.split(","))
+        st.session_state["map_layers"]["manual_points"].append((lat, lon))
+        st.success(f"Punto añadido: ({lat}, {lon})")
+    except ValueError:
+        st.error("Por favor ingresa coordenadas válidas en el formato: lat, lon")
 
-# Retrieve the base map from session state
-m = st.session_state["base_map"]
+# Initialize the map
+m = folium.Map(location=[19.4326, -99.1332], zoom_start=12)
 
-# Add GeoJSON layer dynamically based on colonia selection
-if selected_colonia == "Todas":
-    folium.GeoJson(colonias).add_to(m)
-else:
-    selected_gdf = colonias[colonias['nom_colonia'] == selected_colonia]
-    folium.GeoJson(selected_gdf).add_to(m)
+# Add base tile layers
+folium.TileLayer(
+    tiles='https://www.google.com/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}',
+    attr='Google',
+    name='Google Satellite',
+    overlay=False,
+    control=True
+).add_to(m)
 
-# Add CSV points dynamically
-if not st.session_state["csv_data"].empty:
-    marker_cluster = MarkerCluster().add_to(m)
+folium.TileLayer(
+    tiles='https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+    attr='CartoDB',
+    name='CartoDB Positron',
+    overlay=False,
+    control=True
+).add_to(m)
+
+# Add GeoJSON layer dynamically based on toggle
+if st.session_state["map_layers"]["colonias"]:
+    folium.GeoJson(colonias, name="Colonias").add_to(m)
+
+# Add CSV points dynamically based on toggle
+if st.session_state["map_layers"]["csv_points"] and not st.session_state["csv_data"].empty:
+    marker_cluster = MarkerCluster(name="Puntos CSV").add_to(m)
     for _, row in st.session_state["csv_data"].iterrows():
         folium.Marker(location=[row["lat"], row["lon"]], tooltip=f"Point: {row['lat']}, {row['lon']}").add_to(
             marker_cluster)
 
-# Add manual coordinate point
-if coordinates:
-    try:
-        lat, lon = map(float, coordinates.split(","))
-        folium.Marker(location=[lat, lon], tooltip=f"Punto: {lat}, {lon}").add_to(m)
-        st.success("Punto añadido al mapa")
-    except ValueError:
-        st.error("Por favor ingresa coordenadas válidas en el formato: lat, lon")
+# Add manual points
+if st.session_state["map_layers"]["manual_points"]:
+    for lat, lon in st.session_state["map_layers"]["manual_points"]:
+        folium.Marker(location=[lat, lon], tooltip=f"Punto: {lat}, {lon}", icon=folium.Icon(color="red")).add_to(m)
+
+# Add LayerControl
+folium.LayerControl().add_to(m)
 
 # Render the map
 st_folium(m, width=1000, height=800)
