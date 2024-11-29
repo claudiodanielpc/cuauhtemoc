@@ -5,7 +5,7 @@ from streamlit_folium import st_folium
 from folium.plugins import MarkerCluster
 import geopandas as gpd
 
-url="C:/users/claud/Downloads/cuauhtemoc.gpkg"
+url="https://github.com/claudiodanielpc/cuauhtemoc/raw/refs/heads/main/cuauhtemoc.gpkg"
 
 
 colonias=gpd.read_file(url)
@@ -50,37 +50,45 @@ else:
 
 
 # Add a section for loading the CSV
-st.sidebar.header("Upload CSV or Enter Coordinates")
+st.sidebar.header("Ubicación de puntos en el mapa")
 
 # Option 1: Upload a CSV
-uploaded_file = st.sidebar.file_uploader("Upload a CSV with lat/lon columns", type=["csv"])
+uploaded_file = st.sidebar.file_uploader("Carga CSV con columnas lat y lon", type=["csv"])
 if uploaded_file:
     # Read the CSV
     data = pd.read_csv(uploaded_file)
 
     # Check if required columns exist
     if {'lat', 'lon'}.issubset(data.columns):
-        st.success("CSV loaded successfully!")
+        st.success("¡CSV cargado con éxito!")
         # Add points to the map
         marker_cluster = MarkerCluster().add_to(m)
         for _, row in data.iterrows():
             folium.Marker(location=[row['lat'], row['lon']], tooltip=f"Point: {row['lat']}, {row['lon']}").add_to(marker_cluster)
     else:
-        st.error("The CSV must contain 'lat' and 'lon' columns.")
+        st.error("El CSV debe tener las columnas 'lat' y 'lon'.")
 
 
 # Option 2: Manual Input for a Single Coordinate
-st.sidebar.markdown("### OR")
-lat = st.sidebar.text_input("Enter Latitude")
-lon = st.sidebar.text_input("Enter Longitude")
+st.sidebar.markdown("### Ubicación manual")
+coordinates = st.sidebar.text_input("Inserta coordenadas (formato: lat, lon)")
+
+if coordinates:
+    try:
+        # Split the input into latitude and longitude
+        lat, lon = map(float, coordinates.split(','))
+        folium.Marker(location=[lat, lon], tooltip=f"Punto: {lat}, {lon}").add_to(m)
+        st.success("Punto añadido al mapa")
+    except ValueError:
+        st.error("Por favor ingresa coordenadas válidas en el formato: lat, lon")
 
 if lat and lon:
     try:
         lat, lon = float(lat), float(lon)
-        folium.Marker(location=[lat, lon], tooltip=f"Manual Point: {lat}, {lon}").add_to(m)
-        st.success("Point added to the map!")
+        folium.Marker(location=[lat, lon], tooltip=f"Punto: {lat}, {lon}").add_to(m)
+        st.success("Punto añadido al mapa")
     except ValueError:
-        st.error("Please enter valid numeric coordinates.")
+        st.error("Por favor ingresa coordenadas válidas.")
 
 
 folium.LayerControl().add_to(m)
