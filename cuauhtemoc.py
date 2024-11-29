@@ -96,4 +96,4 @@ if coordinates:
 
 # Add LayerControl and Render the Map
 folium.LayerControl().add_to(m)
-st_folium(m, width=1000, height=800)
+st_folium(m, width=1200, height=800)
