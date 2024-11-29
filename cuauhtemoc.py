@@ -13,7 +13,7 @@ colonias=gpd.read_file("https://raw.githubusercontent.com/claudiodanielpc/cuauht
 st.markdown("<p style='font-family: Century Gothic; font-weight: bold;font-size: 35px; text-align: center'>Cuauhtémoc</p>", unsafe_allow_html=True)
 
 # Dropdown for selecting colonia
-selected_colonia = st.selectbox('Select a colonia', ['All'] + colonias['nom_colonia'].tolist())
+selected_colonia = st.selectbox('Selecciona una colonia', ['Todas'] + colonias['nom_colonia'].tolist())
 
 # iniciar mapa de alcaldía Cuauhtémoc
 m = folium.Map(location=[19.4326, -99.1332], zoom_start=12)
