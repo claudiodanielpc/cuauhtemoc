@@ -1,10 +1,11 @@
 import streamlit as st
 import geopandas as gpd
 import leafmap.foliumap as leafmap
+import pyogrio
 
 # Load GeoJSON
 url = "https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuauhtemoc.geojson"
-cuauhtemoc = gpd.read_file(url)
+cuauhtemoc = gpd.read_file(url, driver="pyogrio")
 
 # Initialize session state for the map
 if "map_initialized" not in st.session_state:
