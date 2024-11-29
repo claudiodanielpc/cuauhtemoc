@@ -15,5 +15,7 @@ colonias = load_colonias()
 
 #Mapa de la alcaldía cuauhtemoc
 
-m = leafmap.Map(tiles="Stamen Terrain", location=[19.4326, -99.1332], zoom_start=12)
+
+m = leafmap.Map(minimap_control=True,location=[19.4326, -99.1332], zoom_start=12)
+m.add_basemap("OpenTopoMap")
 m.to_streamlit(height=500)
