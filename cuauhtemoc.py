@@ -15,12 +15,37 @@ def load_colonias():
         engine="pyogrio")
 
 
-# Load GeoJSON data
-colonias = load_colonias()
+# Initialize session state for the base map and dynamic data
+if "base_map" not in st.session_state:
+    # Create the base map only once
+    m = folium.Map(location=[19.4326, -99.1332], zoom_start=12)
 
-# Initialize session state for CSV data
+    # Add base tile layers
+    folium.TileLayer(
+        tiles='https://www.google.com/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}',
+        attr='Google',
+        name='Google Satellite',
+        overlay=False,
+        control=True
+    ).add_to(m)
+
+    folium.TileLayer(
+        tiles='https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+        attr='CartoDB',
+        name='CartoDB Positron',
+        overlay=False,
+        control=True
+    ).add_to(m)
+
+    folium.LayerControl().add_to(m)
+
+    st.session_state["base_map"] = m
+
 if "csv_data" not in st.session_state:
     st.session_state["csv_data"] = pd.DataFrame(columns=["lat", "lon"])
+
+# Load GeoJSON data (cached)
+colonias = load_colonias()
 
 # App layout
 st.markdown(
@@ -56,25 +81,8 @@ if uploaded_file:
 st.sidebar.markdown("### Ubicación manual")
 coordinates = st.sidebar.text_input("Inserta coordenadas (formato: lat, lon)")
 
-# Initialize the map
-m = folium.Map(location=[19.4326, -99.1332], zoom_start=12)
-
-# Add base tile layers
-folium.TileLayer(
-    tiles='https://www.google.com/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}',
-    attr='Google',
-    name='Google Satellite',
-    overlay=False,
-    control=True
-).add_to(m)
-
-folium.TileLayer(
-    tiles='https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-    attr='CartoDB',
-    name='CartoDB Positron',
-    overlay=False,
-    control=True
-).add_to(m)
+# Retrieve the base map from session state
+m = st.session_state["base_map"]
 
 # Add GeoJSON layer dynamically based on colonia selection
 if selected_colonia == "Todas":
@@ -99,8 +107,5 @@ if coordinates:
     except ValueError:
         st.error("Por favor ingresa coordenadas válidas en el formato: lat, lon")
 
-# Add LayerControl
-folium.LayerControl().add_to(m)
-
 # Render the map
-map_data = st_folium(m, width=1000, height=800)
+st_folium(m, width=1000, height=800)
