@@ -6,18 +6,21 @@ from folium.plugins import MarkerCluster
 import geopandas as gpd
 import pyogrio
 
+# Cache the GeoJSON loading to prevent reloading
+@st.cache_data
+def load_colonias():
+    return gpd.read_file("https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuauhtemoc.geojson", engine="pyogrio")
 
-colonias=gpd.read_file("https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuauhtemoc.geojson",engine="pyogrio" )
-
+# Load the GeoJSON
+colonias = load_colonias()
 
 st.markdown("<p style='font-family: Century Gothic; font-weight: bold;font-size: 35px; text-align: center'>Cuauhtémoc</p>", unsafe_allow_html=True)
 
 # Dropdown for selecting colonia
 selected_colonia = st.selectbox('Selecciona una colonia', ['Todas'] + colonias['nom_colonia'].tolist())
 
-# iniciar mapa de alcaldía Cuauhtémoc
+# Initialize the map for Cuauhtémoc
 m = folium.Map(location=[19.4326, -99.1332], zoom_start=12)
-
 
 # Adding Google Satellite tile layer
 google_satellite = folium.TileLayer(
@@ -39,17 +42,14 @@ cartodb_positron = folium.TileLayer(
 ).add_to(m)
 
 # Add GeoJSON
-if selected_colonia == 'All':
+if selected_colonia == 'Todas':
     folium.GeoJson(colonias).add_to(m)
 else:
     selected_gdf = colonias[colonias['nom_colonia'] == selected_colonia]
     folium.GeoJson(selected_gdf).add_to(m)
 
-
 # Add a section for loading the CSV
 st.sidebar.header("Ubicación de puntos en el mapa")
-
-
 
 # Option 1: Upload a CSV
 uploaded_file = st.sidebar.file_uploader("Carga CSV con columnas lat y lon", type=["csv"])
@@ -76,10 +76,6 @@ if uploaded_file:
     else:
         st.error("El CSV debe tener las columnas 'lat' y 'lon'.")
 
-
-
-
-
 # Option 2: Manual Input for a Single Coordinate
 st.sidebar.markdown("### Ubicación manual")
 coordinates = st.sidebar.text_input("Inserta coordenadas (formato: lat, lon)")
@@ -93,8 +89,7 @@ if coordinates:
     except ValueError:
         st.error("Por favor ingresa coordenadas válidas en el formato: lat, lon")
 
-
-
+# Add LayerControl
 folium.LayerControl().add_to(m)
 
 # Render map
