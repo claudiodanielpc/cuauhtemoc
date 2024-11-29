@@ -15,15 +15,12 @@ def load_colonias():
         engine="pyogrio")
 
 
-# Initialize session state for dynamic layers
-if "selected_colonia" not in st.session_state:
-    st.session_state["selected_colonia"] = "Todas"
-
-if "csv_data" not in st.session_state:
-    st.session_state["csv_data"] = pd.DataFrame(columns=["lat", "lon"])
-
 # Load GeoJSON data
 colonias = load_colonias()
+
+# Initialize session state for CSV data
+if "csv_data" not in st.session_state:
+    st.session_state["csv_data"] = pd.DataFrame(columns=["lat", "lon"])
 
 # App layout
 st.markdown(
@@ -35,7 +32,7 @@ st.sidebar.header("Opciones del mapa")
 
 # Dropdown for selecting a colonia
 selected_colonia = st.sidebar.selectbox(
-    'Selecciona una colonia', ['Todas'] + colonias['nom_colonia'].tolist(), key="selected_colonia"
+    'Selecciona una colonia', ['Todas'] + colonias['nom_colonia'].tolist()
 )
 
 # Upload CSV
@@ -60,32 +57,26 @@ st.sidebar.markdown("### Ubicación manual")
 coordinates = st.sidebar.text_input("Inserta coordenadas (formato: lat, lon)")
 
 # Initialize the map
-if "base_map" not in st.session_state:
-    m = folium.Map(location=[19.4326, -99.1332], zoom_start=12)
-    # Add base tile layers
-    folium.TileLayer(
-        tiles='https://www.google.com/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}',
-        attr='Google',
-        name='Google Satellite',
-        overlay=False,
-        control=True
-    ).add_to(m)
+m = folium.Map(location=[19.4326, -99.1332], zoom_start=12)
 
-    folium.TileLayer(
-        tiles='https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-        attr='CartoDB',
-        name='CartoDB Positron',
-        overlay=False,
-        control=True
-    ).add_to(m)
+# Add base tile layers
+folium.TileLayer(
+    tiles='https://www.google.com/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}',
+    attr='Google',
+    name='Google Satellite',
+    overlay=False,
+    control=True
+).add_to(m)
 
-    folium.LayerControl().add_to(m)
-    st.session_state["base_map"] = m  # Cache the base map
+folium.TileLayer(
+    tiles='https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+    attr='CartoDB',
+    name='CartoDB Positron',
+    overlay=False,
+    control=True
+).add_to(m)
 
-# Retrieve the cached base map
-m = st.session_state["base_map"]
-
-# Add GeoJSON layer dynamically
+# Add GeoJSON layer dynamically based on colonia selection
 if selected_colonia == "Todas":
     folium.GeoJson(colonias).add_to(m)
 else:
@@ -108,5 +99,8 @@ if coordinates:
     except ValueError:
         st.error("Por favor ingresa coordenadas válidas en el formato: lat, lon")
 
+# Add LayerControl
+folium.LayerControl().add_to(m)
+
 # Render the map
-st_folium(m, width=1000, height=800)
+map_data = st_folium(m, width=1000, height=800)
