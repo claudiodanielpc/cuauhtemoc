@@ -4,14 +4,6 @@ import leafmap.foliumap as leafmap
 import geopandas as gpd
 import pyogrio
 
-# Cache GeoJSON loading
-@st.cache_data
-def load_colonias():
-    return gpd.read_file("https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/main/cuauhtemoc.geojson", driver='pyogrio')
-
-# Load GeoJSON data
-colonias = load_colonias()
-
 
 #Mapa de la alcaldía cuauhtemoc
 
