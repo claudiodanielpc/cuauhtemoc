@@ -4,6 +4,7 @@ import folium
 from streamlit_folium import st_folium
 from folium.plugins import MarkerCluster
 import geopandas as gpd
+import pyogrio
 
 
 colonias=gpd.read_file("https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuauhtemoc.geojson",engine="pyogrio" )
