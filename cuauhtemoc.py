@@ -7,8 +7,6 @@ import geopandas as gpd
 
 
 colonias=gpd.read_file("https://github.com/claudiodanielpc/cuauhtemoc/raw/refs/heads/main/cuauhtemoc.gpkg")
-#Filtrar cve_ent=9 y cve_mun=015
-colonias=colonias[(colonias.cve_ent=="09") & (colonias.cve_mun=="015")]
 
 
 st.markdown("<p style='font-family: Century Gothic; font-weight: bold;font-size: 35px; text-align: center'>Cuauhtémoc</p>", unsafe_allow_html=True)
