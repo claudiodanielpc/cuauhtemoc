@@ -2,7 +2,6 @@ import streamlit as st
 import leafmap.foliumap as leafmap
 from pyogrio import read_dataframe
 import pandas as pd
-import geopandas as gpd
 
 # Load GeoJSON
 cuauhtemoc = read_dataframe(
@@ -53,16 +52,20 @@ if uploaded_file is not None:
         # Drop rows with missing lat or lon
         df = df.dropna(subset=['lat', 'lon'])
 
-        # Añadir circlemarkers
-        for _, row in df.iterrows():
-            m.add_circle_markers_from_xy(
-                df,
-                x='lon',
-                y='lat',
-                radius=5,
-                color='red',
-                fill="black"
-            )
+        # Add circle markers using add_circle_markers_from_xy
+        m.add_circle_markers_from_xy(
+            data=df,
+            x='lon',
+            y='lat',
+            layer_name='Puntos cargados',
+            radius=5,  # Circle radius
+            color='red',  # Circle border color
+            fill=True,  # Fill the circle
+            fill_color='black',  # Fill color
+            fill_opacity=0.6,  # Fill opacity
+        )
+    else:
+        st.error("El csv debe contener columnas 'lat' y 'lon'")
 
 # Save map as HTML
 html_file = "map.html"
