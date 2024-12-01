@@ -22,7 +22,7 @@ st.sidebar.info('Acercar a una colonia y cargar coordenadas')
 
 # Dropdown for selecting a colonia
 colonia = st.sidebar.selectbox('Zoom a colonia',
-                               ['Todas las colonias'] + list(cuauhtemoc['nom_colonia'].unique()))
+                               ['------'] + list(cuauhtemoc['nom_colonia'].unique()))
 
 # File uploader for CSV
 uploaded_file = st.sidebar.file_uploader("Carga CSV con lat y lon", type=["csv"])
@@ -61,7 +61,7 @@ else:
         gdf=selected_gdf,
         layer_name=colonia,
         zoom_to_layer=True,
-        style={'color': '#e6550d', 'fill': None, 'weight': 4},
+        style={'color': '#e6550d', 'fill': None, 'weight': 6},
     )
     # if not filtered_cordterritorios.empty:
     #     m.add_gdf(
