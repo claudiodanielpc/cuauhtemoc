@@ -16,10 +16,10 @@ colonia = st.sidebar.selectbox('Selecciona una colonia',
                                ['Todas las colonias'] + list(cuauhtemoc['nom_colonia'].unique()))
 
 # File uploader for CSV
-uploaded_file = st.sidebar.file_uploader("Upload a CSV with Latitude and Longitude", type=["csv"])
+uploaded_file = st.sidebar.file_uploader("Carga CSV con lat y lon", type=["csv"])
 
 # Initialize map centered on Cuauhtémoc
-m = leafmap.Map(center=[19.4326, -99.1332], zoom=12)
+m = leafmap.Map(center=[19.4326, -99.1332], zoom=15)
 
 # Conditional layer addition
 if colonia == 'Todas las colonias':
@@ -59,7 +59,7 @@ if uploaded_file is not None:
                 popup=str(row.to_dict()),  # Show row details as a popup
             )
     else:
-        st.error("The uploaded CSV must contain 'lat' and 'lon' columns.")
+        st.error("El csv debe contener columnas 'lat' y 'lon'")
 
 # Render map in Streamlit
 m.to_streamlit(1000, 800)
