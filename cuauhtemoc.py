@@ -57,17 +57,20 @@ if uploaded_file is not None:
             # Generate a popup string with all column values
             popup_content = "<br>".join([f"{col}: {row[col]}" for col in df.columns])
 
-            m.add_circle_markers_from_xy(
-                data=df,
-                x='lon',
-                y='lat',
-                radius=5,
-                popup_field=popup_content,
-                layer_name='Puntos',
-                fill_color='red',
-                fill_opacity=1,
-                weight=1,
-            )
+            m.add_circle_markers_from_xy(df,
+                                         x='lon',
+                                         y='lat',
+                                         radius=10,
+                                         popup=popup_content,
+                                         font_size=2,
+                                         stroke=True,
+                                         color='#0033FF',
+                                         weight=2,
+                                         fill=True,
+                                         fill_color=None,
+                                         fill_opacity=0.2,
+                                         opacity=1.0,
+                                         layer_name='Puntos')
     else:
         st.error("El csv debe contener columnas 'lat' y 'lon'")
 
