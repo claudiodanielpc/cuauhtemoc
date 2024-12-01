@@ -39,7 +39,7 @@ else:
         layer_name=colonia,
         zoom_to_layer=True,
         info_mode=None,
-        style={'color': 'yellow', 'fill': None, 'weight': 4}
+        style={'color': '#e6550d', 'fill': None, 'weight': 4}
     )
 
 # Handle uploaded CSV
