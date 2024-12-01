@@ -3,6 +3,7 @@ import leafmap.foliumap as leafmap
 from pyogrio import read_dataframe
 import pandas as pd
 import geopandas as gpd
+from select import select
 
 # Load GeoJSON
 cuauhtemoc = read_dataframe(
@@ -15,41 +16,22 @@ cordterritorios = read_dataframe(
 # Ensure CRS match between the two GeoDataFrames
 cordterritorios = cordterritorios.to_crs(cuauhtemoc.crs)
 cordterritorios = cordterritorios[['sector', 'zona', 'no_cdrn', 'geometry']]
-
 # Sidebar configuration
 st.sidebar.title('Opciones')
-st.sidebar.info('Acercar a una colonia o seleccionar varias colonias')
+st.sidebar.info('Acercar a una colonia y cargar coordenadas')
 
-# Initialize session state for colonia and multiple selection
-if "colonia" not in st.session_state:
-    st.session_state.colonia = "Ninguna"
-if "colonias_seleccionadas" not in st.session_state:
-    st.session_state.colonias_seleccionadas = []
+# Dropdown for selecting a colonia
+colonia = st.sidebar.selectbox('Zoom a colonia',
+                               ['Todas las colonias'] + list(cuauhtemoc['nom_colonia'].unique()))
 
-# Dropdown for zooming to a single colonia
-colonia = st.sidebar.selectbox(
-    'Zoom a colonia (una sola)',
-    ['Ninguna'] + list(cuauhtemoc['nom_colonia'].unique()),
-    key="colonia"
-)
-
-# Checklist for selecting multiple colonias
-colonias_seleccionadas = st.sidebar.multiselect(
-    'Seleccionar colonias (puede elegir varias)',
-    options=list(cuauhtemoc['nom_colonia'].unique()),
-    default=st.session_state.colonias_seleccionadas,
-    key="colonias_seleccionadas"
-)
-
-# Logic to reset "colonia" to "Ninguna" if multiple selection is used
-if colonias_seleccionadas and st.session_state.colonia != "Ninguna":
-    st.session_state.colonia = "Ninguna"
+# File uploader for CSV
+uploaded_file = st.sidebar.file_uploader("Carga CSV con lat y lon", type=["csv"])
 
 # Initialize map centered on Cuauhtémoc
 m = leafmap.Map(center=[19.4326, -99.1332], zoom=13)
 
 # Conditional layer addition
-if st.session_state.colonia == "Ninguna" and not colonias_seleccionadas:
+if colonia == 'Todas las colonias':
     # Display all colonias and all cordterritorios
     m.add_gdf(
         gdf=cuauhtemoc,
@@ -58,27 +40,40 @@ if st.session_state.colonia == "Ninguna" and not colonias_seleccionadas:
         info_mode='on_click',
         style={'color': '#7fcdbb', 'fillOpacity': 0.3, 'weight': 0.5},
     )
-elif st.session_state.colonia != "Ninguna":
-    # Filter and display the selected single colonia
-    selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == st.session_state.colonia]
+    # # Add Cuadrantes layer with filtered popups
+    # m.add_gdf(
+    #     gdf=cordterritorios,
+    #     layer_name='Cuadrantes',
+    #     style={'color': '#3182bd', 'fillOpacity': 0.5, 'weight': 1},
+    #     info_mode='on_click'
+    # )
+else:
+    # Filter selected colonia
+    selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == colonia]
+
+    # cordterritorios['centroid'] = cordterritorios.geometry.centroid
+    # filtered_cordterritorios = cordterritorios[cordterritorios['centroid'].intersects(selected_gdf.unary_union)]
+    #
+    # # Drop the 'centroid' column before adding filtered_cordterritorios to the map
+    # filtered_cordterritorios = filtered_cordterritorios.drop(columns=['centroid'])
+    # # Add selected colonia and filtered cordterritorios to the map
     m.add_gdf(
         gdf=selected_gdf,
-        layer_name=st.session_state.colonia,
+        layer_name=colonia,
         zoom_to_layer=True,
         style={'color': '#e6550d', 'fill': None, 'weight': 4},
     )
-elif colonias_seleccionadas:
-    # Filter and display multiple selected colonias
-    selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'].isin(colonias_seleccionadas)]
-    m.add_gdf(
-        gdf=selected_gdf,
-        layer_name='Colonias seleccionadas',
-        zoom_to_layer=True,
-        style={'color': '#e6550d', 'fillOpacity': 0.3, 'weight': 0.5},
-    )
+    # if not filtered_cordterritorios.empty:
+    #     m.add_gdf(
+    #         gdf=filtered_cordterritorios,
+    #         layer_name='Cuadrantes dentro de colonia',
+    #         style={'color': '#3182bd', 'fillOpacity': 0.5, 'weight': 1},
+    #         info_mode='on_click',
+    #
+    #     )
 
 # Handle uploaded CSV
-if uploaded_file := st.sidebar.file_uploader("Carga CSV con lat y lon", type=["csv"]):
+if uploaded_file is not None:
     # Read CSV into a DataFrame
     df = pd.read_csv(uploaded_file)
 
