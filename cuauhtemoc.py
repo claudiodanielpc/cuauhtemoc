@@ -7,6 +7,13 @@ import pandas as pd
 cuauhtemoc = read_dataframe(
     'https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuauhtemoc.geojson')
 
+
+cordterritorios = read_dataframe(
+    "https://datos.cdmx.gob.mx/dataset/b973e46d-fad7-4f7e-ae80-f70c77ff38d7/resource/7f479d17-d279-4b88-ac60-307da106a1f6/download/coordinaciones.geojson")
+
+# Ensure CRS match between the two GeoDataFrames
+cordterritorios = cordterritorios.to_crs(cuauhtemoc.crs)
+
 # Sidebar configuration
 st.sidebar.title('Opciones')
 st.sidebar.info('Acercar a una colonia y cargar coordenadas')
@@ -23,7 +30,7 @@ m = leafmap.Map(center=[19.4326, -99.1332], zoom=13)
 
 # Conditional layer addition
 if colonia == 'Todas las colonias':
-    # Display all colonias if no specific selection
+    # Display all colonias and all cordterritorios
     m.add_gdf(
         gdf=cuauhtemoc,
         zoom_to_layer=False,
@@ -31,16 +38,32 @@ if colonia == 'Todas las colonias':
         info_mode='on_click',
         style={'color': '#7fcdbb', 'fillOpacity': 0.3, 'weight': 0.5},
     )
+    m.add_gdf(
+        gdf=cordterritorios,
+        layer_name='cordterritorios',
+        style={'color': '#3182bd', 'fillOpacity': 0.5, 'weight': 1},
+    )
 else:
-    # Display only the selected colonia
+    # Filter selected colonia
     selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == colonia]
+    # Spatial join to filter cordterritorios within the selected colonia
+    filtered_cordterritorios = gpd.sjoin(
+        cordterritorios, selected_gdf, op='within'
+    )
+
+    # Add selected colonia and filtered cordterritorios to the map
     m.add_gdf(
         gdf=selected_gdf,
         layer_name=colonia,
         zoom_to_layer=True,
-        info_mode=None,
-        style={'color': '#e6550d', 'fill': None, 'weight': 4}
+        style={'color': '#e6550d', 'fill': None, 'weight': 4},
     )
+    if not filtered_cordterritorios.empty:
+        m.add_gdf(
+            gdf=filtered_cordterritorios,
+            layer_name='cordterritorios dentro de colonia',
+            style={'color': '#3182bd', 'fillOpacity': 0.5, 'weight': 1},
+        )
 
 # Handle uploaded CSV
 if uploaded_file is not None:
