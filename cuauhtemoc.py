@@ -31,7 +31,7 @@ uploaded_file = st.sidebar.file_uploader("Carga CSV con lat y lon", type=["csv"]
 m = leafmap.Map(center=[19.4326, -99.1332], zoom=13)
 
 # Conditional layer addition
-if colonia == 'Todas las colonias':
+if colonia == 'Todas':
     # Display all colonias and all cordterritorios
     m.add_gdf(
         gdf=cuauhtemoc,
