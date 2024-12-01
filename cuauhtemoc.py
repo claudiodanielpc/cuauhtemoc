@@ -44,15 +44,14 @@ if colonia == 'Todas las colonias':
         gdf=cordterritorios,
         layer_name='Cuadrantes',
         style={'color': '#3182bd', 'fillOpacity': 0.5, 'weight': 1},
-        info_mode='on_click',
-        columns=['sector', 'zona', 'no_cdrn'],  # Display only these attributes in the popup
+        info_mode='on_click'
     )
 else:
     # Filter selected colonia
     selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == colonia]
     # Spatial join to filter cordterritorios within the selected colonia
     filtered_cordterritorios = gpd.sjoin(
-        cordterritorios, selected_gdf, op='within'
+        cordterritorios, selected_gdf, predicate='within'
     )
 
     # Add selected colonia and filtered cordterritorios to the map
