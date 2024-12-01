@@ -59,14 +59,14 @@ if uploaded_file is not None:
 
             m.add_circle_markers_from_xy(
                 data=df,
-                lon=row['lon'],
-                lat=row['lat'],
-                popup=popup_content,
+                x='lon',
+                y='lat',
                 radius=5,
-                fill_color='blue',
-                fill_opacity=0.8,
+                popup_field=popup_content,
+                layer_name='Puntos',
+                fill_color='red',
+                fill_opacity=1,
                 weight=1,
-                color='black',
             )
     else:
         st.error("El csv debe contener columnas 'lat' y 'lon'")
