@@ -2,6 +2,7 @@ import streamlit as st
 import leafmap.foliumap as leafmap
 from pyogrio import read_dataframe
 import pandas as pd
+import io
 
 # Load GeoJSON
 cuauhtemoc = read_dataframe(
@@ -60,6 +61,31 @@ if uploaded_file is not None:
             )
     else:
         st.error("El csv debe contener columnas 'lat' y 'lon'")
+
+# Add save map as HTML, PNG, or PDF
+st.sidebar.title("Save Map")
+save_option = st.sidebar.selectbox("Selecciona formato", ["None", "HTML", "PNG", "PDF"])
+
+if save_option == "HTML":
+    # Export map as HTML
+    html_content = m.to_html()
+    st.download_button(
+        label="Descargar mapa como HTML",
+        data=html_content,
+        file_name="mapa.html",
+        mime="text/html",
+    )
+
+elif save_option in ["PNG", "PDF"]:
+    # Save as image (PNG/PDF)
+    img_buffer = io.BytesIO()
+    m.to_image(outfile=img_buffer, format=save_option.lower())
+    st.download_button(
+        label=f"Descargar mapa como {save_option}",
+        data=img_buffer.getvalue(),
+        file_name=f"mapa.{save_option.lower()}",
+        mime=f"application/{save_option.lower()}",
+    )
 
 # Render map in Streamlit
 m.to_streamlit(1000, 800)
