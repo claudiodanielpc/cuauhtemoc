@@ -35,14 +35,15 @@ if colonia == 'Todas las colonias':
     m.add_gdf(
         gdf=cuauhtemoc,
         zoom_to_layer=False,
-        layer_name='colonias',
+        layer_name='Colonias',
         info_mode='on_click',
         style={'color': '#7fcdbb', 'fillOpacity': 0.3, 'weight': 0.5},
     )
     m.add_gdf(
         gdf=cordterritorios,
-        layer_name='cordterritorios',
+        layer_name='Cuadrantes',
         style={'color': '#3182bd', 'fillOpacity': 0.5, 'weight': 1},
+
     )
 else:
     # Filter selected colonia
