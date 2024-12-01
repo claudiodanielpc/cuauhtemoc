@@ -2,6 +2,7 @@ import streamlit as st
 import leafmap.foliumap as leafmap
 from pyogrio import read_dataframe
 import pandas as pd
+import geopandas as gpd
 
 # Load GeoJSON
 cuauhtemoc = read_dataframe(
