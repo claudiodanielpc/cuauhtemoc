@@ -65,17 +65,16 @@ if uploaded_file is not None:
 html_file = "map.html"
 m.to_html(outfile=html_file)
 
-# Add download option for HTML
-st.sidebar.title("Guardar mapa")
-if st.sidebar.button("Descargar mapa como HTML"):
-    with open(html_file, "r") as file:
-        html_content = file.read()
-        st.download_button(
-            label="Descargar mapa como HTML",
-            data=html_content,
-            file_name="mapa.html",
-            mime="text/html",
-        )
+# Main menu bar: Save Button
+st.markdown("### Guardar Mapa")
+with open(html_file, "r") as file:
+    html_content = file.read()
+    st.download_button(
+        label="💾 Descargar mapa como HTML",
+        data=html_content,
+        file_name="mapa.html",
+        mime="text/html",
+    )
 
 # Render map in Streamlit
 m.to_streamlit(1000, 800)
