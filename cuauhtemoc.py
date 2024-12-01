@@ -4,8 +4,8 @@ import leafmap
 import pyogrio
 
 # Load GeoJSON
-url = "https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuauhtemoc.geojson"
-cuauhtemoc = gpd.read_file(url, driver="pyogrio")
+#url = "https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuauhtemoc.geojson"
+#uauhtemoc = gpd.read_file(url, driver="pyogrio")
 
 
 
