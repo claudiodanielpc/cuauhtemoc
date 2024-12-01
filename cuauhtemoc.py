@@ -5,10 +5,10 @@ import pandas as pd
 import geopandas as gpd
 
 # Load GeoJSON
-cuauhtemoc = gpd.read_file(
+cuauhtemoc = read_dataframe(
     'https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuauhtemoc.geojson')
 
-cordterritorios = gpd.read_file(
+cordterritorios = read_dataframe(
     "https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuadrantes_cuauhtemoc.geojson"
 )
 
