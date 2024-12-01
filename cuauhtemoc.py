@@ -62,4 +62,4 @@ if uploaded_file is not None:
         st.error("The uploaded CSV must contain 'lat' and 'lon' columns.")
 
 # Render map in Streamlit
-m.to_streamlit(2000, 600)
+m.to_streamlit(1000, 800)
