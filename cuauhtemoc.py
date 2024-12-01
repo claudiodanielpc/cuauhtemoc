@@ -51,7 +51,10 @@ else:
     # Filter selected colonia
     selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == colonia]
 
-    filtered_cordterritorios = cordterritorios[cordterritorios.geometry.contains(selected_gdf.unary_union)]
+    joined_cordterritorios = gpd.sjoin(cordterritorios, selected_gdf, how='inner', predicate='intersects')
+
+    # Further filter to ensure polygons are completely within the selected colonia
+    filtered_cordterritorios = joined_cordterritorios[joined_cordterritorios.geometry.within(selected_gdf.unary_union)]
 
 
     # Add selected colonia and filtered cordterritorios to the map
