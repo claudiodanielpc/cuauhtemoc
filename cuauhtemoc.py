@@ -4,7 +4,7 @@ from pyogrio import read_dataframe
 
 # Load GeoJSON
 
-colonias=read_dataframe('https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuauhtemoc.geojson')
+cuauhtemoc=read_dataframe('https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuauhtemoc.geojson')
 
 st.sidebar.title('About')
 st.sidebar.info('Explore the Highway Statistics')
