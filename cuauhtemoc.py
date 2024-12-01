@@ -3,6 +3,7 @@ import leafmap.foliumap as leafmap
 from pyogrio import read_dataframe
 import pandas as pd
 import geopandas as gpd
+from select import select
 
 # Load GeoJSON
 cuauhtemoc = read_dataframe(
@@ -50,9 +51,9 @@ else:
     # Filter selected colonia
     selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == colonia]
     # Spatial join to filter cordterritorios within the selected colonia
-    filtered_cordterritorios = gpd.sjoin(
-        cordterritorios, selected_gdf, predicate='within'
-    )
+    selected_gdf = selected_gdf[selected_gdf.is_valid]
+    filtered_cordterritorios = selected_gdf.sjoin(cordterritorios, how='inner', predicate='intersects')
+
 
     # Add selected colonia and filtered cordterritorios to the map
     m.add_gdf(
@@ -67,7 +68,7 @@ else:
             layer_name='Cuadrantes dentro de colonia',
             style={'color': '#3182bd', 'fillOpacity': 0.5, 'weight': 1},
             info_mode='on_click',
-            columns=['sector', 'zona', 'no_cdrn'],  # Display only these attributes in the popup
+
         )
 
 # Handle uploaded CSV
