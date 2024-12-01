@@ -40,37 +40,37 @@ if colonia == 'Todas las colonias':
         info_mode='on_click',
         style={'color': '#7fcdbb', 'fillOpacity': 0.3, 'weight': 0.5},
     )
-    # Add Cuadrantes layer with filtered popups
-    m.add_gdf(
-        gdf=cordterritorios,
-        layer_name='Cuadrantes',
-        style={'color': '#3182bd', 'fillOpacity': 0.5, 'weight': 1},
-        info_mode='on_click'
-    )
+    # # Add Cuadrantes layer with filtered popups
+    # m.add_gdf(
+    #     gdf=cordterritorios,
+    #     layer_name='Cuadrantes',
+    #     style={'color': '#3182bd', 'fillOpacity': 0.5, 'weight': 1},
+    #     info_mode='on_click'
+    # )
 else:
     # Filter selected colonia
     selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == colonia]
 
-    cordterritorios['centroid'] = cordterritorios.geometry.centroid
-    filtered_cordterritorios = cordterritorios[cordterritorios['centroid'].intersects(selected_gdf.unary_union)]
-
-    # Drop the 'centroid' column before adding filtered_cordterritorios to the map
-    filtered_cordterritorios = filtered_cordterritorios.drop(columns=['centroid'])
-    # Add selected colonia and filtered cordterritorios to the map
+    # cordterritorios['centroid'] = cordterritorios.geometry.centroid
+    # filtered_cordterritorios = cordterritorios[cordterritorios['centroid'].intersects(selected_gdf.unary_union)]
+    #
+    # # Drop the 'centroid' column before adding filtered_cordterritorios to the map
+    # filtered_cordterritorios = filtered_cordterritorios.drop(columns=['centroid'])
+    # # Add selected colonia and filtered cordterritorios to the map
     m.add_gdf(
         gdf=selected_gdf,
         layer_name=colonia,
         zoom_to_layer=True,
         style={'color': '#e6550d', 'fill': None, 'weight': 4},
     )
-    if not filtered_cordterritorios.empty:
-        m.add_gdf(
-            gdf=filtered_cordterritorios,
-            layer_name='Cuadrantes dentro de colonia',
-            style={'color': '#3182bd', 'fillOpacity': 0.5, 'weight': 1},
-            info_mode='on_click',
-
-        )
+    # if not filtered_cordterritorios.empty:
+    #     m.add_gdf(
+    #         gdf=filtered_cordterritorios,
+    #         layer_name='Cuadrantes dentro de colonia',
+    #         style={'color': '#3182bd', 'fillOpacity': 0.5, 'weight': 1},
+    #         info_mode='on_click',
+    #
+    #     )
 
 # Handle uploaded CSV
 if uploaded_file is not None:
