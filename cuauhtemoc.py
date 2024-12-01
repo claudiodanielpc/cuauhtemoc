@@ -61,16 +61,8 @@ if uploaded_file is not None:
                                          x='lon',
                                          y='lat',
                                          radius=10,
-                                         popup=popup_content,
-                                         font_size=2,
-                                         stroke=True,
-                                         color='#0033FF',
-                                         weight=2,
-                                         fill=True,
-                                         fill_color=None,
-                                         fill_opacity=0.2,
-                                         opacity=1.0,
-                                         layer_name='Puntos')
+                                         color="blue",
+                                         fill="black")
     else:
         st.error("El csv debe contener columnas 'lat' y 'lon'")
 
@@ -79,7 +71,7 @@ html_file = "map.html"
 m.to_html(outfile=html_file)
 
 # Main menu bar: Save Button
-st.markdown("### Guardar Mapa")
+st.markdown("### Mapa de la Alcaldía Cuauhtémoc")
 with open(html_file, "r") as file:
     html_content = file.read()
     st.download_button(
