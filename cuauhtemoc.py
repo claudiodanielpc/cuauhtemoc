@@ -19,7 +19,7 @@ colonia = st.sidebar.selectbox('Selecciona una colonia',
 uploaded_file = st.sidebar.file_uploader("Carga CSV con lat y lon", type=["csv"])
 
 # Initialize map centered on Cuauhtémoc
-m = leafmap.Map(center=[19.4326, -99.1332], zoom=15)
+m = leafmap.Map(center=[19.4326, -99.1332], zoom=13)
 
 # Conditional layer addition
 if colonia == 'Todas las colonias':
