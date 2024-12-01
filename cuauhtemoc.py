@@ -53,7 +53,7 @@ else:
 
 
     # Further filter to ensure polygons are completely within the selected colonia
-    filtered_cordterritorios = gpd.overlay(selected_gdf, cordterritorios, how='within')
+    filtered_cordterritorios = cordterritorios.sjoin(selected_gdf, how='inner', op='intersects')
 
 
     # Add selected colonia and filtered cordterritorios to the map
