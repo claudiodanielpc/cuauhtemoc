@@ -49,6 +49,9 @@ if uploaded_file is not None:
 
     # Check if required columns are present
     if 'lat' in df.columns and 'lon' in df.columns:
+        # Drop rows with missing lat or lon
+        df = df.dropna(subset=['lat', 'lon'])
+
         # Add points from CSV to the map
         for _, row in df.iterrows():
             m.add_marker(
