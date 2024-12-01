@@ -26,11 +26,14 @@ colonia = st.sidebar.selectbox(
     ['Ninguna'] + list(cuauhtemoc['nom_colonia'].unique())
 )
 
-# Checklist for selecting multiple colonias
-colonias_seleccionadas = st.sidebar.multiselect(
-    'Seleccionar colonias (puede elegir varias)',
-    options=list(cuauhtemoc['nom_colonia'].unique())
-)
+# Checkbox to enable/disable multiple colonia selection
+if colonia == 'Ninguna':  # Only allow multiselect when no specific colonia is chosen
+    colonias_seleccionadas = st.sidebar.multiselect(
+        'Seleccionar colonias (puede elegir varias)',
+        options=list(cuauhtemoc['nom_colonia'].unique())
+    )
+else:
+    colonias_seleccionadas = []  # Disable multiselect when a specific colonia is chosen
 
 # File uploader for CSV
 uploaded_file = st.sidebar.file_uploader("Carga CSV con lat y lon", type=["csv"])
