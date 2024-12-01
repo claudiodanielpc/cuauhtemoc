@@ -52,7 +52,7 @@ else:
     selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == colonia]
 
     cordterritorios['centroid'] = cordterritorios.geometry.centroid
-    filtered_cordterritorios = cordterritorios[cordterritorios['centroid'].within(selected_gdf.unary_union)]
+    filtered_cordterritorios = cordterritorios[cordterritorios['centroid'].intersects(selected_gdf.unary_union)]
 
     # Drop the 'centroid' column before adding filtered_cordterritorios to the map
     filtered_cordterritorios = filtered_cordterritorios.drop(columns=['centroid'])
