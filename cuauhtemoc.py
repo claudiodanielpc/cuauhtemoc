@@ -52,7 +52,7 @@ else:
     # Filter selected colonia
     selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == colonia]
 
-    filtered_cordterritorios = gpd.sjoin(selected_gdf, cordterritorios, predicate='contains')
+    filtered_cordterritorios = gpd.sjoin(selected_gdf, cordterritorios, predicate='intersects')
 
 
     # Add selected colonia and filtered cordterritorios to the map
