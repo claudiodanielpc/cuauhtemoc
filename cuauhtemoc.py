@@ -52,19 +52,16 @@ if uploaded_file is not None:
         # Drop rows with missing lat or lon
         df = df.dropna(subset=['lat', 'lon'])
 
-        # Add circle markers from CSV to the map
+        # Añadir circlemarkers
         for _, row in df.iterrows():
-            # Generate a popup string with all column values
-            popup_content = "<br>".join([f"{col}: {row[col]}" for col in df.columns])
-
-            m.add_circle_markers_from_xy(df,
-                                         x='lon',
-                                         y='lat',
-                                         radius=10,
-                                         color="blue",
-                                         fill="black")
-    else:
-        st.error("El csv debe contener columnas 'lat' y 'lon'")
+            m.add_circle_markers_from_xy(
+                df,
+                x='lon',
+                y='lat',
+                radius=5,
+                color='red',
+                fill="black"
+            )
 
 # Save map as HTML
 html_file = "map.html"
