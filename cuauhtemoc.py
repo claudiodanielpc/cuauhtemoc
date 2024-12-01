@@ -14,7 +14,7 @@ cordterritorios = read_dataframe(
 
 # Ensure CRS match between the two GeoDataFrames
 cordterritorios = cordterritorios.to_crs(cuauhtemoc.crs)
-
+cordterritorios = cordterritorios[['sector', 'zona', 'no_cdrn', 'geometry']]
 # Sidebar configuration
 st.sidebar.title('Opciones')
 st.sidebar.info('Acercar a una colonia y cargar coordenadas')
