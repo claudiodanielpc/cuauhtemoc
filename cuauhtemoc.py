@@ -20,29 +20,36 @@ cordterritorios = cordterritorios[['sector', 'zona', 'no_cdrn', 'geometry']]
 st.sidebar.title('Opciones')
 st.sidebar.info('Acercar a una colonia o seleccionar varias colonias')
 
+# Initialize session state for colonia and multiple selection
+if "colonia" not in st.session_state:
+    st.session_state.colonia = "Ninguna"
+if "colonias_seleccionadas" not in st.session_state:
+    st.session_state.colonias_seleccionadas = []
+
 # Dropdown for zooming to a single colonia
 colonia = st.sidebar.selectbox(
     'Zoom a colonia (una sola)',
-    ['Ninguna'] + list(cuauhtemoc['nom_colonia'].unique())
+    ['Ninguna'] + list(cuauhtemoc['nom_colonia'].unique()),
+    key="colonia"
 )
 
-# Checkbox to enable/disable multiple colonia selection
-if colonia == 'Ninguna':  # Only allow multiselect when no specific colonia is chosen
-    colonias_seleccionadas = st.sidebar.multiselect(
-        'Seleccionar colonias (puede elegir varias)',
-        options=list(cuauhtemoc['nom_colonia'].unique())
-    )
-else:
-    colonias_seleccionadas = []  # Disable multiselect when a specific colonia is chosen
+# Checklist for selecting multiple colonias
+colonias_seleccionadas = st.sidebar.multiselect(
+    'Seleccionar colonias (puede elegir varias)',
+    options=list(cuauhtemoc['nom_colonia'].unique()),
+    default=st.session_state.colonias_seleccionadas,
+    key="colonias_seleccionadas"
+)
 
-# File uploader for CSV
-uploaded_file = st.sidebar.file_uploader("Carga CSV con lat y lon", type=["csv"])
+# Logic to reset "colonia" to "Ninguna" if multiple selection is used
+if colonias_seleccionadas and st.session_state.colonia != "Ninguna":
+    st.session_state.colonia = "Ninguna"
 
 # Initialize map centered on Cuauhtémoc
 m = leafmap.Map(center=[19.4326, -99.1332], zoom=13)
 
 # Conditional layer addition
-if colonia == 'Ninguna' and not colonias_seleccionadas:
+if st.session_state.colonia == "Ninguna" and not colonias_seleccionadas:
     # Display all colonias and all cordterritorios
     m.add_gdf(
         gdf=cuauhtemoc,
@@ -51,12 +58,12 @@ if colonia == 'Ninguna' and not colonias_seleccionadas:
         info_mode='on_click',
         style={'color': '#7fcdbb', 'fillOpacity': 0.3, 'weight': 0.5},
     )
-elif colonia != 'Ninguna':
+elif st.session_state.colonia != "Ninguna":
     # Filter and display the selected single colonia
-    selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == colonia]
+    selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == st.session_state.colonia]
     m.add_gdf(
         gdf=selected_gdf,
-        layer_name=colonia,
+        layer_name=st.session_state.colonia,
         zoom_to_layer=True,
         style={'color': '#e6550d', 'fill': None, 'weight': 4},
     )
@@ -71,7 +78,7 @@ elif colonias_seleccionadas:
     )
 
 # Handle uploaded CSV
-if uploaded_file is not None:
+if uploaded_file := st.sidebar.file_uploader("Carga CSV con lat y lon", type=["csv"]):
     # Read CSV into a DataFrame
     df = pd.read_csv(uploaded_file)
 
