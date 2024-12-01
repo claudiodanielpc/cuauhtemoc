@@ -51,12 +51,11 @@ else:
     # Filter selected colonia
     selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == colonia]
 
-    # Calculate centroids of cordterritorios
     cordterritorios['centroid'] = cordterritorios.geometry.centroid
-
-    # Filter polygons whose centroids are within the selected colonia
     filtered_cordterritorios = cordterritorios[cordterritorios['centroid'].within(selected_gdf.unary_union)]
 
+    # Drop the 'centroid' column before adding filtered_cordterritorios to the map
+    filtered_cordterritorios = filtered_cordterritorios.drop(columns=['centroid'])
     # Add selected colonia and filtered cordterritorios to the map
     m.add_gdf(
         gdf=selected_gdf,
