@@ -5,12 +5,12 @@ import pandas as pd
 import geopandas as gpd
 
 # Load GeoJSON
-cuauhtemoc = read_dataframe(
+cuauhtemoc = gpd.read_file(
     'https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuauhtemoc.geojson')
 
-
-cordterritorios = read_dataframe(
-    "https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuadrantes_cuauhtemoc.geojson")
+cordterritorios = gpd.read_file(
+    "https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuadrantes_cuauhtemoc.geojson"
+)
 
 # Ensure CRS match between the two GeoDataFrames
 cordterritorios = cordterritorios.to_crs(cuauhtemoc.crs)
@@ -39,11 +39,13 @@ if colonia == 'Todas las colonias':
         info_mode='on_click',
         style={'color': '#7fcdbb', 'fillOpacity': 0.3, 'weight': 0.5},
     )
+    # Add Cuadrantes layer with filtered popups
     m.add_gdf(
         gdf=cordterritorios,
         layer_name='Cuadrantes',
         style={'color': '#3182bd', 'fillOpacity': 0.5, 'weight': 1},
-
+        info_mode='on_click',
+        columns=['sector', 'zona', 'no_cdrn'],  # Display only these attributes in the popup
     )
 else:
     # Filter selected colonia
@@ -63,8 +65,10 @@ else:
     if not filtered_cordterritorios.empty:
         m.add_gdf(
             gdf=filtered_cordterritorios,
-            layer_name='cordterritorios dentro de colonia',
+            layer_name='Cuadrantes dentro de colonia',
             style={'color': '#3182bd', 'fillOpacity': 0.5, 'weight': 1},
+            info_mode='on_click',
+            columns=['sector', 'zona', 'no_cdrn'],  # Display only these attributes in the popup
         )
 
 # Handle uploaded CSV
