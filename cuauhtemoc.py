@@ -10,7 +10,7 @@ cuauhtemoc = read_dataframe(
 
 
 cordterritorios = read_dataframe(
-    "https://datos.cdmx.gob.mx/dataset/b973e46d-fad7-4f7e-ae80-f70c77ff38d7/resource/7f479d17-d279-4b88-ac60-307da106a1f6/download/coordinaciones.geojson")
+    "https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuadrantes_cuauhtemoc.geojson")
 
 # Ensure CRS match between the two GeoDataFrames
 cordterritorios = cordterritorios.to_crs(cuauhtemoc.crs)
