@@ -52,7 +52,7 @@ else:
     selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == colonia]
     # Spatial join to filter cordterritorios within the selected colonia
     selected_gdf = selected_gdf[selected_gdf.is_valid]
-    filtered_cordterritorios = selected_gdf.sjoin(cordterritorios, how='inner', predicate='intersects')
+    filtered_cordterritorios = selected_gdf.sjoin(cordterritorios, how='left', predicate='intersects')
 
 
     # Add selected colonia and filtered cordterritorios to the map
