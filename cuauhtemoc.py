@@ -22,7 +22,7 @@ st.sidebar.info('Acercar a una colonia y cargar coordenadas')
 
 # Dropdown for selecting a colonia
 colonia = st.sidebar.selectbox('Zoom a colonia',
-                               [' '] + list(cuauhtemoc['nom_colonia'].unique()))
+                               ['Todas'] + list(cuauhtemoc['nom_colonia'].unique()))
 
 # File uploader for CSV
 uploaded_file = st.sidebar.file_uploader("Carga CSV con lat y lon", type=["csv"])
