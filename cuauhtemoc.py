@@ -1,5 +1,6 @@
 import streamlit as st
 import leafmap.foliumap as leafmap
+from Demos.win32console_demo import coord
 from pyogrio import read_dataframe
 import pandas as pd
 import geopandas as gpd
@@ -51,7 +52,7 @@ else:
     # Filter selected colonia
     selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == colonia]
 
-    filtered_cordterritorios = gpd.sjoin(cordterritorios, selected_gdf, predicate='within')
+    filtered_cordterritorios = gpd.sjoin(selected_gdf, cordterritorios, predicate='within')
 
 
     # Add selected colonia and filtered cordterritorios to the map
