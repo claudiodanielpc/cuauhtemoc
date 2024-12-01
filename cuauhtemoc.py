@@ -17,5 +17,6 @@ m.add_tile_layer(
     name="Google Satellite",
     attribution="Google",
 )
-m
+
+m.to_streamlit()
 
