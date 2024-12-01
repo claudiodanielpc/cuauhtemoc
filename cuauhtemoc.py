@@ -50,7 +50,8 @@ if colonia == 'Todas las colonias':
 else:
     # Filter selected colonia
     selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == colonia]
-
+    selected_gdf = selected_gdf[selected_gdf.is_valid]
+    cordterritorios = cordterritorios[cordterritorios.is_valid]
     joined_cordterritorios = gpd.sjoin(cordterritorios, selected_gdf, how='inner', predicate='intersects')
 
     # Further filter to ensure polygons are completely within the selected colonia
