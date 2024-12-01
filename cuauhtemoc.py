@@ -2,20 +2,17 @@ import streamlit as st
 import leafmap.foliumap as leafmap
 from pyogrio import read_dataframe
 import pandas as pd
-import asyncio
-from pyppeteer import launch
-import os
 
 # Load GeoJSON
 cuauhtemoc = read_dataframe(
     'https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuauhtemoc.geojson')
 
 # Sidebar configuration
-st.sidebar.title('About')
-st.sidebar.info('Explore the Highway Statistics')
+st.sidebar.title('Opciones')
+st.sidebar.info('Acercar a una colonia y cargar coordenadas')
 
 # Dropdown for selecting a colonia
-colonia = st.sidebar.selectbox('Selecciona una colonia',
+colonia = st.sidebar.selectbox('Zoom a colonia',
                                ['Todas las colonias'] + list(cuauhtemoc['nom_colonia'].unique()))
 
 # File uploader for CSV
@@ -68,38 +65,16 @@ if uploaded_file is not None:
 html_file = "map.html"
 m.to_html(outfile=html_file)
 
-
-async def take_screenshot(html_file, output_file):
-    # Launch Pyppeteer
-    browser = await launch(headless=True)
-    page = await browser.newPage()
-
-    # Set viewport size
-    await page.setViewport({"width": 1200, "height": 800})
-
-    # Open the map HTML file
-    await page.goto(f"file://{os.path.abspath(html_file)}")
-
-    # Wait for the map to load
-    await page.waitForSelector("#map")
-
-    # Take a screenshot
-    await page.screenshot(path=output_file)
-    await browser.close()
-
-
-# Add options for saving the map as PNG
-if st.sidebar.button("Descargar mapa como PNG"):
-    png_file = "map.png"
-    asyncio.run(take_screenshot(html_file, png_file))
-
-    # Provide the PNG file as a download
-    with open(png_file, "rb") as file:
+# Add download option for HTML
+st.sidebar.title("Guardar mapa")
+if st.sidebar.button("Descargar mapa como HTML"):
+    with open(html_file, "r") as file:
+        html_content = file.read()
         st.download_button(
-            label="Descargar mapa como PNG",
-            data=file,
-            file_name="mapa.png",
-            mime="image/png",
+            label="Descargar mapa como HTML",
+            data=html_content,
+            file_name="mapa.html",
+            mime="text/html",
         )
 
 # Render map in Streamlit
