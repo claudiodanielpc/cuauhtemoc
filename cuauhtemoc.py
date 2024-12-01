@@ -51,7 +51,7 @@ else:
     # Filter selected colonia
     selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == colonia]
 
-    filtered_cordterritorios = selected_gdf.sjoin(cordterritorios, how='inner', op='contains')
+    filtered_cordterritorios = cordterritorios.sjoin(selected_gdf, how='inner', op='contains')
 
 
     # Add selected colonia and filtered cordterritorios to the map
