@@ -11,7 +11,7 @@ import pyogrio
 
 #Mapa centrado en la alcaldía Cuauhtémoc
 
-m = leafmap.Map(center=[19.4326, -99.1332], zoom=12)
+m = leafmap.Map()
 m.add_tile_layer(
     url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}",
     name="Google Satellite",
