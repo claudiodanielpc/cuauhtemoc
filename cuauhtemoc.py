@@ -57,14 +57,15 @@ if uploaded_file is not None:
             # Generate a popup string with all column values
             popup_content = "<br>".join([f"{col}: {row[col]}" for col in df.columns])
 
-            m.add_circle_marker(
-                location=(row['lat'], row['lon']),
-                radius=5,  # Adjust the radius of the circle
-                color="blue",  # Outline color
-                fill=True,
-                fill_color="cyan",  # Fill color
-                fill_opacity=0.6,  # Adjust transparency
-                popup=popup_content,  # Use dynamically generated popup content
+            m.add_circle_markers_from_xy(
+                lon=row['lon'],
+                lat=row['lat'],
+                popup=popup_content,
+                radius=5,
+                fill_color='blue',
+                fill_opacity=0.8,
+                weight=1,
+                color='black',
             )
     else:
         st.error("El csv debe contener columnas 'lat' y 'lon'")
