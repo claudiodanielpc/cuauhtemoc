@@ -1,11 +1,10 @@
 import streamlit as st
-import geopandas as gpd
 import leafmap.foliumap as leafmap
-import pyogrio
+from pyogrio import read_dataframe
 
 # Load GeoJSON
 
-cuauhtemoc = gpd.read_file("https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuauhtemoc.geojson", driver="pyogrio")
+colonias=read_dataframe('https://raw.githubusercontent.com/claudiodanielpc/cuauhtemoc/refs/heads/main/cuauhtemoc.geojson')
 
 st.sidebar.title('About')
 st.sidebar.info('Explore the Highway Statistics')

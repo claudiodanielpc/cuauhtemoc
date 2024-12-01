@@ -1,4 +1,3 @@
-geopandas==0.14.2
 leafmap==0.41.5
 pyogrio==0.10.0
 streamlit==1.40.2
