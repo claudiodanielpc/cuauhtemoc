@@ -52,11 +52,19 @@ if uploaded_file is not None:
         # Drop rows with missing lat or lon
         df = df.dropna(subset=['lat', 'lon'])
 
-        # Add points from CSV to the map
+        # Add circle markers from CSV to the map
         for _, row in df.iterrows():
-            m.add_marker(
+            # Generate a popup string with all column values
+            popup_content = "<br>".join([f"{col}: {row[col]}" for col in df.columns])
+
+            m.add_circle_marker(
                 location=(row['lat'], row['lon']),
-                popup=str(row.to_dict()),  # Show row details as a popup
+                radius=5,  # Adjust the radius of the circle
+                color="blue",  # Outline color
+                fill=True,
+                fill_color="cyan",  # Fill color
+                fill_opacity=0.6,  # Adjust transparency
+                popup=popup_content,  # Use dynamically generated popup content
             )
     else:
         st.error("El csv debe contener columnas 'lat' y 'lon'")
