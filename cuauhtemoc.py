@@ -24,7 +24,7 @@ selected_gdf = cuauhtemoc[cuauhtemoc['nom_colonia'] == colonia]
 
 m.add_gdf(
     gdf=selected_gdf,
-    layer_name='selected',
+    layer_name=colonia,
     zoom_to_layer=True,
     info_mode=None,
     style={'color': 'yellow', 'fill': None, 'weight': 2}
