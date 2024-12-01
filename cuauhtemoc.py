@@ -58,6 +58,7 @@ if uploaded_file is not None:
             popup_content = "<br>".join([f"{col}: {row[col]}" for col in df.columns])
 
             m.add_circle_markers_from_xy(
+                data=df,
                 lon=row['lon'],
                 lat=row['lat'],
                 popup=popup_content,
